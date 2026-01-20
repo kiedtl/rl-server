@@ -1,0 +1,392 @@
+@font-face {
+    font-family: 'Atkinson Hyperlegible Next';
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url(/fonts/ahn-normal.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible Next';
+    font-style: italic;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url(/fonts/ahn-italic.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'pxplus';
+    font-display: swap;
+    src: url(/fonts/pxplus.ttf) format('truetype');
+}
+
+* {
+    --bg: #0f0e0b;
+    --bg-2: #2f2e2b;
+    --fg: #ffefd4;
+    --fg-d: #dfcfb4;
+    --fg-c: #cfbfa4;
+    --fg-dark: #9f8f74;
+    --fg-7: #8f7f64;
+    --fg-6: #7f6f54;
+    --fg-4: #5f4f34;
+    --green-1: #102017;
+    --green-2: #203027;
+    --green-3: #304037;
+    --green-5: #506057;
+    --green-8: #809087;
+}
+
+html {
+    font-family: Atkinson Hyperlegible Next, sans-serif;
+    font-size: 11.5pt;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    text-align: left;
+    background: var(--bg);
+    margin: 2rem;
+    justify-content: center;
+    color: var(--fg);
+}
+
+main {
+    display: block;
+    min-width: 18em;
+    max-width: 60em;
+    width: 80%;
+}
+
+nav {
+    max-width: 170px;
+    min-width: 170px;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+
+    h3 {
+        border: none;
+    }
+}
+
+h1 {
+    font-size: 1.8rem;
+    a {
+        color: var(--fg-dark);
+        border: none;
+    }
+    a:hover, a:active {
+        border: none;
+        text-decoration: underline;
+    }
+}
+
+h2 {
+    font-size: 1.6rem;
+    color: var(--fg-dark);
+}
+
+h3, h4 {
+    a {
+        color: inherit;
+        border: none;
+    }
+    a:hover, a:active {
+        border: none;
+        text-decoration: underline;
+    }
+}
+
+h3 {
+    color: var(--fg-dark);
+    font-size: 1.3rem;
+    display: block;
+    width: 100%;
+    border-bottom: 0.1rem dashed #8f7f64;
+}
+
+h4 {
+    font-family: 'pxplux', monospace;
+    font-size: 1.1rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    width: fit-content;
+    padding: 0.2rem 2rem 0.2rem 2rem;
+    margin-bottom: 0.5rem;
+    background: var(--green-2);
+    position: relative;
+}
+
+h4:before, h4:after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    height: calc(100% - 10px);
+    width: 1em;
+    background-color: var(--fg-6);
+}
+
+h4:before {
+    left: 5px;
+}
+
+h4:after {
+    right: 5px;
+}
+
+hr {
+    background: radial-gradient(var(--fg) 0.5px, var(--bg) 1px) 0 0/3px 3px, transparent;
+    border: 0;
+    opacity: 0.6;
+    height: 0.5rem;
+    max-height: 0.5rem;
+    margin: 0em 0 1.3rem 0;
+    width: 100%;
+}
+
+table>tbody>tr>td, table>thead>tr>th {
+    padding: 0.25em 1.5em 0.25em 0.5em;
+}
+
+table>tbody>tr {
+    border: 1px solid var(--fg-dark);
+}
+
+table.list>tbody>tr:nth-child(even) {
+    background: var(--bg-2);
+}
+
+table.sheet {
+    td:first-child {
+        border-right: 0.2rem double var(--fg-6);
+    }
+    tbody>tr td:nth-child(even) {
+        background: var(--bg-2);
+    }
+}
+
+td.m {
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+td#sub {
+    padding-left: 2rem;
+    position: relative;
+}
+
+td#sub:before {
+    content: "";
+    background-color: var(--green-3);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 1em;
+    height: calc(100% - 10px);
+    display: inline-block;
+}
+
+td.subtle {
+    color: var(--fg-7);
+}
+
+.sideth, td.shrink {
+    /* https://stackoverflow.com/a/11267268 */
+    width: 0.01%;
+    white-space: nowrap;
+    padding-right: 0.5rem;
+}
+
+.sideth {
+    background: var(--green-2) !important;
+    text-align: right;
+    border-right: 0.2rem double var(--fg-6);
+}
+
+table>thead>tr {
+    background: var(--green-3);
+    border: 1px solid var(--fg);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+a {
+    color: #b0c4de;
+    text-decoration: none;
+    border: 0.1rem dashed #b0c4de;
+    padding: 0.1rem 0.2rem 0.1rem 0.2rem;
+}
+
+a:hover {
+    border: 0.1rem solid #b0c4de;
+}
+
+a:active {
+    background: #30445e;
+}
+
+a.btn {
+    display: block;
+    border: 1px solid var(--fg);
+    padding: 0.08em 0.7em;
+    text-align: center;
+    background: var(--green-3);
+    color: var(--fg);
+    text-decoration: none;
+}
+
+a.btn:hover {
+    background: var(--green-2);
+}
+
+a.btn:active {
+    background: var(--bg);
+}
+
+a.btn:after {
+    content: " →";
+}
+
+a.nav {
+    display: block;
+    box-shadow: 3px 3px var(--fg-4);
+    border: 1px solid var(--fg-6);
+    background: var(--green-1);
+    color: var(--fg);
+    padding: 0.08em 0.7em;
+    text-decoration: none;
+    margin-bottom: 0.35em;
+    width: 80%;
+    position: relative;
+}
+
+a.nav:hover {
+    background: var(--green-3);
+}
+
+a.sel.nav::after {
+    content: "";
+    background-color: var(--fg-6);
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 1em;
+    height: calc(100% - 4px);
+    display: inline-block;
+}
+
+footer {
+    display: flex;
+    flex-direction: row;
+    gap: 2%;
+
+    a, a:hover, a:active {
+        border: none;
+    }
+}
+
+img.badge {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  width: auto;
+  height: 19px;
+  min-height: 19px;
+  max-height: 19px;
+}
+
+img.inline, svg.inline {
+    display: inline-block;
+    width: auto;
+    max-height: 1.2rem;
+    margin: 0;
+    padding: 0;
+    image-orientation: from-image;
+    vertical-align: middle;
+}
+
+.morgue-header {
+    font-family: 'pxplus', monospace;
+    display: grid;
+    row-gap: 0;
+    align-content: center;
+
+    span {
+        display: inline-block;
+        font-size: 1.8rem;
+        line-height: 1.15em;
+        text-align: center;
+    }
+
+    .morgue-name {
+        color: var(--fg-d);
+    }
+
+    .morgue-result {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .morgue-death {
+        color: var(--fg-d);
+    }
+
+    .morgue-death-captain {
+        color: var(--fg-c);
+        font-size: 1.3rem;
+    }
+
+    .morgue-location {
+        color: var(--fg-d);
+    }
+}
+
+/* Game messages */
+.message {
+    font-family: 'pxplus', monospace;
+
+    .m-aquamarine { color: #7fffd4 }
+    .m-blue       { color: #b0c4de }
+    .m-concrete   { color: #efdfc4 }
+    .m-grey       { color: #afafaf }
+    .m-gold       { color: #ddb733 }
+    .m-pink       { color: #ffc0cb }
+    .m-red        { color: #db7093 }
+    .m-white      { color: #fff3f3 } /* Slightly reddish, because pure white looks blue on the background */
+}
+
+.panel-list {
+    display: grid;
+    gap: 1.5rem;
+
+    table {
+        height: fit-content;
+    }
+}
+
+.panel-list.p3 {
+    grid-template-columns: 1fr 2fr 2fr;
+}
+
+.panel-list:not(.p3) {
+    grid-template-columns: 1fr 1fr;
+}
+
+.map {
+    display: grid;
+    justify-items: center;
+    code {
+        background: var(--green-2);
+        border: 0.1rem solid var(--fg-6);
+        padding: 1rem;
+    }
+}

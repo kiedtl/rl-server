@@ -1,0 +1,7 @@
+public/*.html
+debug/
+target/
+Cargo.lock
+**/*.rs.bk
+**/*.sqlite3
+**/**s3**
