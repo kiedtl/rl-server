@@ -42,7 +42,7 @@ use tracing_subscriber::EnvFilter;
 
 use crate::morgue::GameResult;
 
-static FAVICON: &str = "R0lGODdhEAAQAKIDAAAAAP8AAP8AUP////9vb+SHhwAAAAAAACH5BAkAAAMALAAAAAAQABAAAANOOLrcC45BBcgE+NoBi61EiBXkiA1hKlYQRJAqvHGr92IineKfyqvAHShUyABsq1RxIBAEjjsdoOkMPHPSpxVwnXEw1vDz1ACHyREjWpEAADs=";
+static FAVICON: &str = "iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAMAAAAocOYLAAAAAXNSR0IArs4c6QAAAGZQTFRFAAAADw4LRSg8ZjkxbmFN33Emn49038+0+/I2meVQar4wN5RuS2kvUkskMjw5Pz90MGCCW27hY5v/X83ky9v8////m623hH6HaWpqWVZSdkKKrDIy2Vdj13u6j5dKim8wOU8kW4A5TRFYOgAAACJ0Uk5TAP///////////////////////////////////////////y79k78AAADHSURBVCiRxdGxCsMwDATQHBh5Mdqyy///kz2dncZQmpR2qCjB4dXS2dlwXRtaa3A+mmtZa4XxUU1L+vp3+vo6PCLcI0tuZqVYlhyIDnj03kObjC2KaULOd3r3dARfLKeX9FyO/tyZM6jqz505A+WcL3c/5svL4T7TzXxlppv56JBnPjnkuoGRDyT3dOXjxbB7us3zpQPP86Xzcsb5Zj5lOPMpAz6635vvc/d9/+C76q1P2688f6vX+pvf9X/1/dKP+ub8a/3qD94aFj7571ZOAAAAAElFTkSuQmCC";
 static STYLE: &str = include_str!("../assets/main.css");
 
 #[derive(Debug, Clone)]
@@ -172,7 +172,6 @@ async fn main() -> AnyResult<()> {
     };
 
     let app = Router::new()
-        // .route("/", get(home_page))
         .route("/s/ls", get(highscore_page))
         .route("/s/{score_id}", get(score_page))
         .route("/api/upload", post(api::upload_morgue))
@@ -654,7 +653,6 @@ async fn highscore_page(State(state): State<AppState>) -> impl IntoResponse {
                         th { "result" }
                         th { "ended at" }
                         th { "foes vanquished" }
-                        th { "link" }
                     }
                 }
                 tbody {
@@ -663,17 +661,18 @@ async fn highscore_page(State(state): State<AppState>) -> impl IntoResponse {
                             td { (item.player_name) }
                             td #m { (format!("{}", item.date.format("%Y-%m-%d %H:%M"))) }
                             td {
-                                (match item.result {
-                                    GameResult::Win => "escaped",
-                                    GameResult::Lose => "killed",
-                                    GameResult::Unknown => "??",
-                                })
+                                a .btn href=(format!("/s/{}", item.id)) {
+                                    (match item.result {
+                                        GameResult::Win => "won",
+                                        GameResult::Lose => "died",
+                                        GameResult::Unknown => "??",
+                                    })
+                                }
                             }
                             td { (game::LEVELS[item.end_level as usize]) }
                             td {
                                 (item.slain_foes)" slain, "(item.stabbed_foes)" by surprise"
                             }
-                            td { a .btn href=(format!("/s/{}", item.id)) { "Go" } }
                         }
                     }
                 }
@@ -771,31 +770,33 @@ impl<R: Renderable> Renderable for Doc<R> {
             html {
                 head lang="en" {
                     meta charset="utf-8";
-                    link href=(format!("data:image/gif;base64,{FAVICON}")) rel="icon";
+                    link href=(format!("data:image/png;base64,{FAVICON}")) rel="icon";
 
                     script data-goatcounter="https://loap.goatcounter.com/count"
                         async src="//gc.zgo.at/count.js" { }
 
                     style { (Raw(STYLE)) }
                     title {
-                        "LOAP — " (self.page.title())
+                        "Oathbreaker — " (self.page.title())
                     }
                 }
                 body {
-                    nav {
+                    aside {
                         img src="/images/avatar.png";
                         h1 { a href="/" { "Oathbreaker" } }
                         h3 { "A traditional roguelike with a focus on stealth" }
-                        @for page in nav_pages {
-                            @if matches!(page, Page::External(_, _)) {
-                                a .nav target="_blank" href=(page.href()) {
-                                    (page.title()) " "
-                                    img .inline src="/images/external.svg";
+                        nav {
+                            @for page in nav_pages {
+                                @if matches!(page, Page::External(_, _)) {
+                                    a .nav target="_blank" href=(page.href()) {
+                                        (page.title()) " "
+                                        img .inline src="/images/external.svg";
+                                    }
+                                } @else if *page == self.page {
+                                    a .sel .nav href=(page.href()) { (page.title()) }
+                                } @else {
+                                    a .nav href=(page.href()) { (page.title()) }
                                 }
-                            } @else if *page == self.page {
-                                a .sel .nav href=(page.href()) { (page.title()) }
-                            } @else {
-                                a .nav href=(page.href()) { (page.title()) }
                             }
                         }
                     }
