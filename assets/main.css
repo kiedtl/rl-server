@@ -14,6 +14,94 @@
     src: url(/fonts/ahn-italic.woff2) format('woff2');
 }
 
+/* latin-ext */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dNIFZifjKcF5UAWdDRYERMSXK_IwU.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dNIFZifjKcF5UAWdDRYERMR3K_.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dSIFZifjKcF5UAWdDRYERE_FeqEiSRV3U.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dSIFZifjKcF5UAWdDRYERE_FeqHCSR.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dPIFZifjKcF5UAWdDRYE98RWq7.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dPIFZifjKcF5UAWdDRYEF8RQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dMIFZifjKcF5UAWdDRaPpZUFuaHjyV.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/spacemono/v17/i7dMIFZifjKcF5UAWdDRaPpZUFWaHg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'American Typewriter';
+    font-style: normal;
+    font-weight: 200;
+    font-display: swap;
+    src: url(/fonts/american-typewriter-reg.ttf) format('truetype');
+}
+
 @font-face {
     font-family: 'pxplus';
     font-display: swap;
@@ -23,7 +111,8 @@
 * {
     --bg: #0f0e0b;
     --bg-2: #2f2e2b;
-    --fg: #ffefd4;
+    --fg-br: #ffffe4;
+    --fg: #efdfc4;
     --fg-d: #dfcfb4;
     --fg-c: #cfbfa4;
     --fg-dark: #9f8f74;
@@ -38,7 +127,7 @@
 }
 
 html {
-    font-family: Atkinson Hyperlegible Next, sans-serif;
+    font-family: 'American Typewriter', sans-serif;
     font-size: 11.5pt;
 }
 
@@ -53,6 +142,24 @@ body {
     color: var(--fg);
 }
 
+pre, code {
+    font-family: "Space Mono", monospace;
+    font-size: 0.9rem;
+}
+
+p code, li code {
+    display: inline-block;
+    font-size: 0.85rem;
+    background: var(--green-2);
+    padding: 0 0.2rem;
+    border: 0.1rem solid var(--fg-4);
+    margin-bottom: 0.2rem;
+}
+
+strong {
+    color: var(--fg-br);
+}
+
 main {
     display: block;
     min-width: 18em;
@@ -61,8 +168,8 @@ main {
 }
 
 nav {
-    max-width: 170px;
-    min-width: 170px;
+    max-width: 13rem;
+    min-width: 13rem;
 
     img {
         width: 100%;
@@ -88,6 +195,7 @@ h1 {
 
 h2 {
     font-size: 1.6rem;
+    margin-top: 0;
     color: var(--fg-dark);
 }
 
@@ -149,16 +257,22 @@ hr {
     width: 100%;
 }
 
-table>tbody>tr>td, table>thead>tr>th {
-    padding: 0.25em 0.5em 0.25em 0.5em;
+table {
+    font-family: 'Atkinson Hyperlegible Next', sans-serif;
+
+    tbody>tr>td, thead>tr>th {
+        padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    tbody>tr {
+        border: 1px solid var(--fg-dark);
+    }
 }
 
-table>tbody>tr {
-    border: 1px solid var(--fg-dark);
-}
-
-table.list>tbody>tr:nth-child(even) {
-    background: var(--bg-2);
+table.list {
+    tbody>tr:nth-child(even) {
+        background: var(--bg-2);
+    }
 }
 
 table.sheet {
@@ -173,7 +287,7 @@ table.sheet {
 }
 
 td#m {
-    font-family: monospace;
+    font-family: 'Space Mono', monospace;
     font-size: 0.9em;
 }
 
@@ -223,7 +337,7 @@ table {
 a {
     color: #b0c4de;
     text-decoration: none;
-    border: 0.1rem dashed #b0c4de;
+    border: 0.1rem dashed #b0c4de00;
     padding: 0.1rem 0.2rem 0.1rem 0.2rem;
 }
 
@@ -278,16 +392,17 @@ a.sel.nav::after {
     content: "";
     background-color: var(--fg-6);
     position: absolute;
-    top: 2px;
-    right: 2px;
+    top: 4px;
+    right: 4px;
     width: 1em;
-    height: calc(100% - 4px);
+    height: calc(100% - 8px);
     display: inline-block;
 }
 
 footer {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     gap: 2%;
 
     a, a:hover, a:active {
@@ -355,16 +470,16 @@ img.inline, svg.inline {
 /* Game messages */
 .message {
     font-family: 'pxplus', monospace;
-
-    .m-aquamarine { color: #7fffd4 }
-    .m-blue       { color: #b0c4de }
-    .m-concrete   { color: #efdfc4 }
-    .m-grey       { color: #afafaf }
-    .m-gold       { color: #ddb733 }
-    .m-pink       { color: #ffc0cb }
-    .m-red        { color: #db7093 }
-    .m-white      { color: #fff3f3 } /* Slightly reddish, because pure white looks blue on the background */
 }
+
+.m-aquamarine { color: #7fffd4 }
+.m-blue       { color: #b0c4de }
+.m-concrete   { color: #efdfc4 }
+.m-grey       { color: #afafaf }
+.m-gold       { color: #ddb733 }
+.m-pink       { color: #ffc0cb }
+.m-red        { color: #db7093 }
+.m-white      { color: #fff3f3 } /* Slightly reddish, because pure white looks blue on the background */
 
 .panel-list {
     display: grid;
