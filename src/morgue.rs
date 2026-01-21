@@ -64,6 +64,23 @@ pub struct StatusInfo {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[allow(non_snake_case)]
+pub struct Resistances {
+    pub Armor: isize,
+    pub rFire: isize,
+    pub rElec: isize,
+    pub rFume: usize,
+    pub rAcid: isize,
+    pub rHoly: isize,
+}
+
+impl Resistances {
+    pub fn placeholder() -> Resistances {
+        Resistances { Armor: 0, rFire: 0, rElec: 0, rFume: 0, rAcid: 0, rHoly: 0 }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[allow(non_snake_case)]
 pub struct Stats {
     pub Melee: usize,
     pub Missile: usize,
@@ -108,6 +125,8 @@ pub struct MorgueInfo {
     pub level: u8,
     pub statuses: Vec<StatusInfo>,
     pub stats: Stats,
+    #[serde(default = "Resistances::placeholder")]
+    pub resists: Resistances,
 
     pub surroundings: Vec<Vec<u32>>,
     pub messages: Vec<Message>,

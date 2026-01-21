@@ -1,5 +1,9 @@
 #![allow(unused_imports)]
 
+// Hypertext inserts unnecessary parens when using attrib[predicate]
+// syntax
+#![allow(unused_parens)]
+
 mod api;
 mod game;
 mod morgue;
@@ -233,20 +237,34 @@ async fn score_page(
             br;
             Anchor3 a="state" n="State";
 
-            div .panel-list .p3 {
+            div .panel-list {
                 table {
-                    thead { tr { th colspan=2 { "Stats" } } }
+                    thead { tr { th colspan=3 { "Stats" } } }
                     tbody {
-                        tr { td .sideth { "Melee" }       td { (morgue.info.stats.Melee) } }
-                        tr { td .sideth { "Missile" }     td { (morgue.info.stats.Missile) } }
-                        tr { td .sideth { "Martial" }     td { (morgue.info.stats.Martial) } }
-                        tr { td .sideth { "Evade" }       td { (morgue.info.stats.Evade) } }
-                        tr { td .sideth { "Speed" }       td { (morgue.info.stats.Speed) } }
-                        tr { td .sideth { "Vision" }      td { (morgue.info.stats.Vision) } }
-                        tr { td .sideth { "Willpower" }   td { (morgue.info.stats.Willpower) } }
-                        tr { td .sideth { "Spikes" }      td { (morgue.info.stats.Spikes) } }
-                        tr { td .sideth { "Conjuration" } td { (morgue.info.stats.Conjuration) } }
-                        tr { td .sideth { "Potential" }   td { (morgue.info.stats.Potential) } }
+                        @let s = &morgue.info.stats;
+                    tr { td .sideth { "Melee"       } BarTd p=(s.Melee) show=false;          td { (s.Melee)       "%" } }
+                    tr { td .sideth { "Missile"     } BarTd p=(s.Missile) show=false;        td { (s.Missile)     "%" } }
+                    tr { td .sideth { "Martial"     } td { }                                 td { (s.Martial)         } }
+                    tr { td .sideth { "Evade"       } BarTd p=(s.Evade) show=false;          td { (s.Evade)       "%" } }
+                    tr { td .sideth { "Speed"       } td { }                                 td { (s.Speed)           } }
+                    tr { td .sideth { "Vision"      } td { }                                 td { (s.Vision)          } }
+                    tr { td .sideth { "Willpower"   } BarTd p=(s.Willpower * 10) show=false; td { (s.Willpower)       } }
+                    tr { td .sideth { "Spikes"      } td { }                                 td { (s.Spikes)          } }
+                    tr { td .sideth { "Conjuration" } td { }                                 td { (s.Conjuration) "%" } }
+                    tr { td .sideth { "Potential"   } BarTd p=(s.Potential) show=false;      td { (s.Potential)   "%" } }
+                    }
+                }
+
+                table {
+                    thead { tr { th colspan=3 { "Resistances" } } }
+                    tbody {
+                        @let s = &morgue.info.resists;
+                        tr { td .sideth { "Armor" } SBarTd p=(s.Armor) show=false; td { (s.Armor)"%" } }
+                        tr { td .sideth { "rFire" } SBarTd p=(s.rFire) show=false; td { (s.rFire)"%" } }
+                        tr { td .sideth { "rElec" } SBarTd p=(s.rElec) show=false; td { (s.rElec)"%" } }
+                        tr { td .sideth { "rFume" } BarTd  p=(s.rFume) show=false; td { (s.rFume)    } }
+                        tr { td .sideth { "rAcid" } SBarTd p=(s.rAcid) show=false; td { (s.rAcid)"%" } }
+                        tr { td .sideth { "rHoly" } SBarTd p=(s.rHoly) show=false; td { (s.rHoly)"%" } }
                     }
                 }
 
@@ -486,11 +504,13 @@ fn records_header<'a>(s: &'a morgue::MorgueStats) -> impl Renderable + use<'a> {
             tr {
                 th { }
                 th { }
+                th { }
                 @for v in &s.turns_spent.value.values {
                     th { (v.floor_name.chars().nth(0)) }
                 }
             }
             tr {
+                th { }
                 th { }
                 th { "total" }
                 @for v in &s.turns_spent.value.values {
@@ -506,9 +526,10 @@ fn single_value_set<'a>(v: &'a morgue::SingleValueSet, n: &'a str) -> impl Rende
     maud! {
         tr {
             td { (n) }
-            td .m { (v.value.total) }
+            td { }
+            td #m { (v.value.total) }
             @for c in &v.value.values {
-                td .m { (c.value) }
+                td #m { (c.value) }
             }
         }
     }
@@ -519,21 +540,71 @@ fn batch_value_set<'a>(v: &'a morgue::BatchValueSet, n: &'a str) -> impl Rendera
     maud! {
         tr {
             td { (n) }
-            td .m { (v.total()) }
-            @for _ in 0..v.values.get(0).map(|r| r.value.values.len()).unwrap_or(0) {
-                td {}
+            td { }
+            td #m { (v.total()) }
+
+            @let columns = v.values.get(0).map(|r| r.value.values.len()).unwrap_or(0); 
+            @let column_totals =
+                (0..columns)
+                    .map(|c|
+                        v.values
+                            .iter()
+                            .map(|r| r.value.values.get(c).map(|rs| rs.value).unwrap_or(0))
+                            .reduce(|a, i| a + i)
+                            .unwrap_or(0)
+                            as usize
+                    );
+            @for column_total in column_totals {
+                BarTd p=(column_total * 100 / v.total() as usize) show=true;
             }
         }
         @for row in &v.values {
             tr {
                 td #sub { (row.name) }
-                td { (row.value.total) }
+                BarTd p=((row.value.total * 100 / v.total()) as usize) show=true;
+                td #m { (row.value.total) }
                 @for c in &row.value.values {
                     @let is_zero = c.value == 0;
-                    td .m .subtle[is_zero] { (c.value) }
+                    td #m .subtle[is_zero] { (c.value) }
                 }
             }
         }
+    }
+}
+
+#[component]
+fn s_bar_td(p: isize, show: bool) -> impl Renderable {
+    // Allow a little overfill to show that it exceeds 100%
+    let clamped_percent = p.abs().clamp(0, 110); 
+    let style = format!("width: {clamped_percent}%");
+
+    maud! {
+        td .bar-outer {
+            div .bar {
+                div .bar-inner .bar-neg[p < 0] style=(style) {
+                    @if show {
+                        (p) "%"
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+fn bar_td(p: usize, show: bool) -> impl Renderable {
+    maud! {
+        td .bar-outer { Bar p=(p) show=(show); }
+    }
+}
+
+#[component]
+fn bar(p: usize, show: bool) -> impl Renderable {
+    // Allow a little overfill to show that it exceeds 100%
+    let clamped_percent = p.clamp(0, 110); 
+    let style = format!("width: {clamped_percent}%");
+    maud! {
+        div .bar { div .bar-inner style=(style) { @if show { (p) "%" } } }
     }
 }
 
