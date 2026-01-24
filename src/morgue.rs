@@ -9,7 +9,6 @@ pub struct Datetime {
     Y: u32, M: u32, D: u32, h: u32, m: u32
 }
 
-
 impl Datetime {
     // Falls back to the Oathbreaker Epoch(tm) if anything goes amiss.
     pub fn to_datetime(&self) -> chrono::DateTime<Utc> {
@@ -126,6 +125,13 @@ pub struct Equipment {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct DistanceFromStair {
+    pub distance: Option<usize>,
+    pub is_in_sight: bool,
+    pub stair_dest_name: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MorgueInfo {
     pub seed: u64,
     pub username: String,
@@ -146,6 +152,8 @@ pub struct MorgueInfo {
     #[serde(default = "Resistances::placeholder")]
     pub resists: Resistances,
 
+    #[serde(default = "placeholders::distance_from_stairs")]
+    pub distance_from_stairs: Vec<DistanceFromStair>,
     pub surroundings: Vec<Vec<u32>>,
     pub messages: Vec<Message>,
 
@@ -163,29 +171,29 @@ pub struct MorgueInfo {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Value {
+pub struct Value<T = u64> {
     pub floor_type: String,
     pub floor_name: String,
-    pub value: u64,
+    pub value: T,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ValueSet {
-    pub total: u64,
-    pub values: Vec<Value>,
+pub struct ValueSet<T = u64> {
+    pub total: T,
+    pub values: Vec<Value<T>>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct SingleValueSet {
+pub struct SingleValueSet<T = u64> {
     #[serde(rename = "type")] _t: Option<String>,
-    pub value: ValueSet,
+    pub value: ValueSet<T>,
 }
 
-impl SingleValueSet {
-    pub fn placeholder() -> SingleValueSet {
+impl<T: From<u8>> SingleValueSet<T> {
+    pub fn placeholder() -> SingleValueSet<T> {
         Self {
             _t: None,
-            value: ValueSet { total: 0, values: Vec::new() },
+            value: ValueSet { total: T::from(0), values: Vec::new() },
         }
     }
 }
@@ -227,28 +235,28 @@ pub enum GameResult {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MorgueStats {
-    #[serde(rename="turns spent")]       pub turns_spent: SingleValueSet,
+    #[serde(rename="turns spent")]       pub turns_spent:         SingleValueSet,
     #[serde(rename="turns w/ statuses")] pub turns_with_statuses: BatchValueSet,
     #[serde(default="SingleValueSet::placeholder")]
-    #[serde(rename="health")]            pub health: SingleValueSet,
+    #[serde(rename="health")]            pub health:              SingleValueSet,
     #[serde(default="SingleValueSet::placeholder")]
-    #[serde(rename="night reputation")]  pub night_reputation: SingleValueSet,
-    #[serde(rename="vanquished foes")]   pub vanquished_foes: BatchValueSet,
-    #[serde(rename="stabbed foes")]      pub stabbed_foes: BatchValueSet,
-    #[serde(rename="inflicted damage")]  pub inflicted_damage: BatchValueSet,
-    #[serde(rename="endured damage")]    pub endured_damage: BatchValueSet,
+    #[serde(rename="night reputation")]  pub night_reputation:    SingleValueSet<i64>,
+    #[serde(rename="vanquished foes")]   pub vanquished_foes:     BatchValueSet,
+    #[serde(rename="stabbed foes")]      pub stabbed_foes:        BatchValueSet,
+    #[serde(rename="inflicted damage")]  pub inflicted_damage:    BatchValueSet,
+    #[serde(rename="endured damage")]    pub endured_damage:      BatchValueSet,
     #[serde(default="BatchValueSet::placeholder")]
-    #[serde(rename="endured spells")]    pub endured_spells: BatchValueSet,
+    #[serde(rename="endured spells")]    pub endured_spells:      BatchValueSet,
     #[serde(default="BatchValueSet::placeholder")]
-    #[serde(rename="health restored")]   pub endured_healing: BatchValueSet,
-    #[serde(rename="items thrown")]      pub items_thrown: BatchValueSet,
-    #[serde(rename="items used")]        pub items_used: BatchValueSet,
-    #[serde(rename="rings used")]        pub rings_used: BatchValueSet,
-    #[serde(rename="lairs trespassed")]  pub lairs_trespassed: SingleValueSet,
-    #[serde(rename="candles destroyed")] pub candles_destroyed: SingleValueSet,
-    #[serde(rename="shrines drained")]   pub shrines_drained: SingleValueSet,
-    #[serde(rename="times corrupted")]   pub times_corrupted: BatchValueSet,
-    #[serde(rename="wizard keys used")]  pub wizard_keys_used: BatchValueSet,
+    #[serde(rename="health restored")]   pub endured_healing:     BatchValueSet,
+    #[serde(rename="items thrown")]      pub items_thrown:        BatchValueSet,
+    #[serde(rename="items used")]        pub items_used:          BatchValueSet,
+    #[serde(rename="rings used")]        pub rings_used:          BatchValueSet,
+    #[serde(rename="lairs trespassed")]  pub lairs_trespassed:    SingleValueSet,
+    #[serde(rename="candles destroyed")] pub candles_destroyed:   SingleValueSet,
+    #[serde(rename="shrines drained")]   pub shrines_drained:     SingleValueSet,
+    #[serde(rename="times corrupted")]   pub times_corrupted:     BatchValueSet,
+    #[serde(rename="wizard keys used")]  pub wizard_keys_used:    BatchValueSet,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -271,4 +279,7 @@ impl Morgue {
     }
 }
 
-pub mod placeholders { }
+pub mod placeholders {
+    use super::*;
+    pub fn distance_from_stairs() -> Vec<DistanceFromStair> { Vec::new() }
+}

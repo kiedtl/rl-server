@@ -415,6 +415,35 @@ async fn score_page(
                         }
                     }
                 }
+
+                table .list {
+                    thead {
+                        tr { th colspan=999 { "Nearby stairs" } }
+                        tr {
+                            th { "Stair to" }
+                            th { "Distance" }
+                            th { "Visible?" }
+                        }
+                    }
+                    tbody {
+                        @for dfs in &morgue.info.distance_from_stairs {
+                            tr {
+                                td { (dfs.stair_dest_name) }
+                                td {
+                                    @if let Some(dist) = dfs.distance {
+                                        (dist)
+                                    } @else {
+                                        "unreachable(?!)"
+                                    }
+                                }
+                                td { (utils::fmt_bool(dfs.is_in_sight)) }
+                            }
+                        }
+                        @if morgue.info.distance_from_stairs.is_empty() {
+                            tr { td colspan=999 { "(not recorded)" } }
+                        }
+                    }
+                }
             }
 
             br;
@@ -463,7 +492,7 @@ async fn score_page(
                 RecordsHeader s=(&morgue.stats);
                 tbody {
                     SingleValueSet v=(&morgue.stats.health)              n="health"                  t=false;
-                    SingleValueSet v=(&morgue.stats.night_reputation)    n="night reputation"        t=false;
+                    SingleValueSetI64 v=(&morgue.stats.night_reputation) n="night reputation"        t=false;
                 }
             }
 
@@ -553,6 +582,19 @@ fn records_header<'a>(s: &'a morgue::MorgueStats) -> impl Renderable + use<'a> {
 
 #[component]
 fn single_value_set<'a>(v: &'a morgue::SingleValueSet, n: &'a str, t: bool) -> impl Renderable + use<'a> {
+    single_value_set_helper::<u64>(v, n, t)
+}
+
+#[component]
+fn single_value_set_i64<'a>(v: &'a morgue::SingleValueSet<i64>, n: &'a str, t: bool) -> impl Renderable + use<'a> {
+    single_value_set_helper::<i64>(v, n, t)
+}
+
+fn single_value_set_helper<'a, T: hypertext::Renderable>(
+    v: &'a morgue::SingleValueSet<T>,
+    n: &'a str,
+    t: bool,
+) -> impl Renderable + use<'a, T> {
     maud! {
         tr {
             td { (n) }

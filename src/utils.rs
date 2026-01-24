@@ -28,6 +28,14 @@ pub fn fmt_game_message(raw: &str) -> String {
     buf
 }
 
+pub fn fmt_bool(b: bool) -> &'static str {
+    if b {
+        "yes"
+    } else {
+        "no"
+    }
+}
+
 pub fn fmt_size(size: u32) -> String {
     let (prec, fac, suffix) = match size {
         0..1000 => (0, 1.0, ""),
