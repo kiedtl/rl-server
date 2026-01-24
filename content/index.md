@@ -4,10 +4,10 @@ page: Home
 
 ![Screenshot](/images/rl/26/jan23-website-pri.png)
 
-Oathbreaker is a traditional roguelike with a focus on stealth, heavily inspired
-by games like Harmonist. As a prisoner in a goblin outpost, you must escape your
-impending execution — preferably creating as small a disturbance possible in
-the process.
+You are at the website for Oathbreaker, a stealth roguelike heavily inspired by
+games like [Harmonist](https://anaseto.codeberg.page/games/harmonist/). As a
+prisoner in a goblin outpost, you must escape your impending execution —
+preferably creating as small a disturbance possible in the process.
 
 ### What?
 
