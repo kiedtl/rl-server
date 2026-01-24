@@ -804,6 +804,7 @@ impl<R: Renderable> Renderable for Doc<R> {
             html {
                 head lang="en" {
                     meta charset="utf-8";
+                    meta name="viewport" content="width=device-width, initial-scale=1";
                     link href=(format!("data:image/png;base64,{FAVICON}")) rel="icon";
 
                     script data-goatcounter="https://oathbreaker.goatcounter.com/count"
