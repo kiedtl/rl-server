@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS "Scores" (
 	end_level	INTEGER,
 	slain_foes	INTEGER,
 	stabbed_foes	INTEGER,
+	seed		INTEGER 	NOT NULL,
 	
 	PRIMARY KEY("id"),
 	FOREIGN KEY(player) REFERENCES Players(id)

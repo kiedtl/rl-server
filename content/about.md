@@ -50,7 +50,9 @@ This website is written in Rust, using Axum and
 [hypertext](https://docs.rs/hypertext) for server-side page generation. Static
 content is written in markdown.
 
-- [Source for this website](https://github.com/kiedtl/rl-server)
+<a target="_blank" href='https://github.com/kiedtl/sorting-tutor'>
+	<img class="inline badge" src='//tilde.team/~kiedtl/images/badges/source/github.gif' />
+</a>
 
 Fonts used:
 
@@ -60,10 +62,6 @@ Fonts used:
 - `Space Mono`
 
 <p>
-<a target="_blank" href='https://github.com/kiedtl/sorting-tutor'>
-	<img class="inline badge" src='//tilde.team/~kiedtl/images/badges/source/github.gif' />
-</a>
-
 <a target="_blank" href='https://en.wikipedia.org/wiki/Lie'>
 	<img class="inline badge" src='//tilde.team/~kiedtl/images/badges/club/512kb-club.png' />
 </a>

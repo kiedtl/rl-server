@@ -128,7 +128,6 @@
 
 html {
     font-family: 'American Typewriter', sans-serif;
-    font-size: 11.5pt;
 }
 
 body {
@@ -165,6 +164,10 @@ main {
     min-width: 18em;
     max-width: 60em;
     width: 80%;
+
+    p:first-child {
+        margin-top: 0;
+    }
 }
 
 aside {
@@ -360,7 +363,11 @@ a:active {
     background: #30445e;
 }
 
-a.btn {
+button.popover {
+    display: contents;
+}
+
+a.btn, button, input::file-selector-button {
     display: block;
     border: 1px solid var(--fg);
     padding: 0.08em 0.7em;
@@ -368,13 +375,15 @@ a.btn {
     background: var(--green-3);
     color: var(--fg);
     text-decoration: none;
+    /* For some reason, needed for button */
+    font-family: 'American Typewriter', sans-serif;
 }
 
-a.btn:hover {
+a.btn:hover, button:hover, input::file-selector-button:hover {
     background: var(--green-2);
 }
 
-a.btn:active {
+a.btn:active, button:active, input::file-selector-button:active  {
     background: var(--bg);
 }
 
@@ -410,6 +419,16 @@ a.sel.nav::after {
     display: inline-block;
 }
 
+.par-with-img {
+    display: flex;
+    gap: 1rem;
+
+    :not(:popover-open):not(.inline) img {
+        max-width: 30%;
+        height: 100%;
+    }
+}
+
 footer {
     display: flex;
     flex-direction: row;
@@ -419,6 +438,27 @@ footer {
     a, a:hover, a:active {
         border: none;
     }
+}
+
+:popover-open {
+    border: none;
+    background: #00000000;
+    max-width: 85%;
+    padding: 1rem;
+    overflow: clip;
+
+    img {
+        border: 0.2rem solid var(--fg-6);
+        box-shadow: 0.3rem 0.3rem var(--fg-4);
+    }
+}
+
+img:not(.inline) {
+    display: block;
+    object-fit: contain;
+    max-width: 100%;
+    border: 0.1rem solid var(--fg-6);
+    box-shadow: 0.2rem 0.2rem var(--fg-4);
 }
 
 img.badge {
@@ -547,7 +587,23 @@ td.bar-outer {
     background: #804067;
 }
 
-@media screen and (max-width: 40rem) {
+form {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 0.1rem solid var(--fg-6);
+    box-shadow: 0.2rem 0.2rem var(--fg-4);
+    background: var(--green-1);
+    padding: 1rem;
+    width: 60%;
+    margin: 1rem auto; /* center */
+}
+
+@media (max-width: 45rem), (max-width: 800px), (pointer: none), (pointer: coarse) {
+    html {
+        font-size: 18pt;
+    }
+
     body {
         flex-direction: column;
         gap: 1.5rem;
@@ -558,7 +614,7 @@ td.bar-outer {
         max-width: 100%;
 
         display: grid;
-        grid-template-columns: 1fr 2fr;
+        grid-template-columns: 2fr 3fr;
         grid-gap: 1rem;
 
         img {
@@ -570,11 +626,14 @@ td.bar-outer {
         }
 
         h1 {
-            font-size: 1.4rem;
+            font-size: 2.2rem;
+            margin-top: 1rem;
+            margin-bottom: 0;
         }
 
         h3 {
-            font-size: 1.1rem;
+            margin-top: 1rem;
+            font-size: 1.2rem;
         }
 
         nav {

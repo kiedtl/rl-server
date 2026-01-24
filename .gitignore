@@ -1,4 +1,5 @@
 public/*.html
+public/images/rl
 debug/
 target/
 Cargo.lock

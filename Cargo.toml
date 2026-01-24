@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.98"
-axum = { version = "0.8.0", features = ["macros"] }
+axum = { version = "0.8.0", features = ["macros", "multipart"] }
 chrono = { version = "0.4.41", features = ["serde"] }
 futures = "0.3.30"
 gray_matter = "0.2.8"

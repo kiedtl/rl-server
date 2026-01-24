@@ -3,8 +3,8 @@ use std::time::Duration;
 use crate::morgue::Morgue;
 
 use axum::{
-    extract::{Json, Query, State},
-    http::{Method, StatusCode},
+    extract::{Multipart, Json, Query, State},
+    http::{self, Method, StatusCode},
     response::{Response, Redirect, IntoResponse},
 };
 use chrono::{DateTime, Utc};
@@ -53,9 +53,11 @@ impl IntoResponse for ServerError {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub enum ApiError {
-    NotFound,
+    // NotFound,
+    BadRequest,
+    BadRequestCustom(String),
 }
 
 impl IntoResponse for ApiError {
@@ -63,7 +65,9 @@ impl IntoResponse for ApiError {
         use StatusCode as SC;
 
         match self {
-            ApiError::NotFound => (SC::NOT_FOUND, "Not found.").into_response(),
+            // ApiError::NotFound => (SC::NOT_FOUND, "Not found.").into_response(),
+            ApiError::BadRequest => (SC::BAD_REQUEST, "Bad request.").into_response(),
+            ApiError::BadRequestCustom(s) => (SC::BAD_REQUEST, s).into_response(),
         }
     }
 }
@@ -74,39 +78,95 @@ pub async fn upload_morgue(
 )
     -> Result<AnyOf2<String, ApiError>, String>
 {
+    match upload_morgue_helper(state, body).await {
+        Ok(Ok(_)) => Ok(AnyOf2::A("Success".into())),
+        Ok(Err(e)) => Ok(AnyOf2::B(ApiError::BadRequestCustom(e))),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn upload_morgue_form(
+    State(state): State<AppState>,
+    mut multipart: Multipart,
+)
+    -> Result<Response, String>
+{
+    let Ok(Some(field)) = multipart.next_field().await else {
+        return Ok(ApiError::BadRequest.into_response());
+    };
+
+    match field.name() {
+        Some("file") => {
+            let Ok(data) = field.bytes().await else {
+                return Ok(ApiError::BadRequest.into_response());
+            };
+            match upload_morgue_helper(state, data).await {
+                Ok(Ok(morgue_id)) => {
+                    let loc = format!("/s/{morgue_id}");
+                    Ok((StatusCode::SEE_OTHER, [(http::header::LOCATION, loc)]).into_response())
+                },
+                Ok(Err(s)) => Ok(ApiError::BadRequestCustom(s).into_response()),
+                Err(e) => Err(e),
+            }
+        }
+        _ => return Ok(ApiError::BadRequest.into_response()),
+    }
+}
+
+async fn upload_morgue_helper(
+    state: AppState,
+    body: axum::body::Bytes,
+)
+    -> Result<Result<i64, String>, String>
+{
     info!("api: handling upload_morgue");
+    let mut conn = state.db.lock().await;
 
     let body_str = std::str::from_utf8(&body).map_err(|e| e.to_string())?;
-    let q: Morgue = serde_json::from_str(body_str).map_err(|e| e.to_string())?;
+    let q: Morgue = match serde_json::from_str(body_str) {
+        Ok(m) => m,
+        Err(e) => return Ok(Err(e.to_string())),
+    };
+    let seed = q.info.seed.cast_signed(); // Sqlite3 doesn't support u64
+    let timestamp = q.info.end_datetime.to_datetime().timestamp();
 
-    let mut conn = state.db.lock().await;
+    let already_exists: bool = sqlx::query_scalar(
+        "SELECT EXISTS(SELECT 1 FROM Scores WHERE date = ? AND seed = ?)"
+    )
+        .bind(timestamp)
+        .bind(seed)
+        .fetch_one(&mut *conn)
+        .await
+        .map_err(|v| v.to_string())?;
+
+    if already_exists {
+        return Ok(Err(format!("Morgue with timestamp {} and seed {} already exists", timestamp, q.info.seed)));
+    }
 
     let player_id = get_or_create_player_id(&mut *conn, &q.info.username)
         .await
         .map_err(|e| e.to_string())?;
 
-    let r = sqlx::query(
+    let morgue_id: i64 = sqlx::query_scalar(
         "INSERT INTO Scores
-            (date, player, result, morgue, end_level, slain_foes, stabbed_foes)
+            (date, player, result, morgue, end_level, slain_foes, stabbed_foes, seed)
         VALUES
-            ($1, $2, $3, $4, $5, $6, $7);"
+            ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id;"
     )
-        .bind(q.info.end_datetime.to_datetime().timestamp())
+        .bind(timestamp)
         .bind(player_id)
         .bind(q.result())
         .bind(body_str)
         .bind(q.info.level)
         .bind(q.stats.vanquished_foes.total() as u32)
         .bind(q.stats.stabbed_foes.total() as u32)
-        .execute(&mut *conn)
+        .bind(seed)
+        .fetch_one(&mut *conn)
         .await
         .map_err(|err| err.to_string())?;
 
-    if r.rows_affected() != 1 {
-        Err("Internal database error".to_string())
-    } else {
-        Ok(AnyOf2::A("Success".to_string()))
-    }
+    Ok(Ok(morgue_id))
 }
 
 async fn get_or_create_player_id(

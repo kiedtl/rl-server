@@ -9,6 +9,7 @@ mod game;
 mod morgue;
 mod utils;
 
+use std::collections::HashMap;
 use std::fmt;
 use std::fs;
 use std::net::Ipv4Addr;
@@ -175,6 +176,7 @@ async fn main() -> AnyResult<()> {
         .route("/s/ls", get(highscore_page))
         .route("/s/{score_id}", get(score_page))
         .route("/api/upload", post(api::upload_morgue))
+        .route("/api/upload-form", post(api::upload_morgue_form))
         .fallback(static_page)
         .layer(TraceLayer::new_for_http())
         .with_state(state);
@@ -246,10 +248,10 @@ async fn score_page(
             Anchor3 a="state" n="State";
 
             div .panel-list {
+                @if morgue.info.stats != crate::morgue::Stats::placeholder() {
                 table {
                     thead { tr { th colspan=3 { "Stats" } } }
-                    tbody {
-                        @let s = &morgue.info.stats;
+                    @let s = &morgue.info.stats;
                     tr { td .sideth { "Melee"       } BarTd p=(s.Melee) show=false;          td { (s.Melee)       "%" } }
                     tr { td .sideth { "Missile"     } BarTd p=(s.Missile) show=false;        td { (s.Missile)     "%" } }
                     tr { td .sideth { "Martial"     } td { }                                 td { (s.Martial)         } }
@@ -258,14 +260,14 @@ async fn score_page(
                     tr { td .sideth { "Vision"      } td { }                                 td { (s.Vision)          } }
                     tr { td .sideth { "Willpower"   } BarTd p=(s.Willpower * 10) show=false; td { (s.Willpower)       } }
                     tr { td .sideth { "Spikes"      } td { }                                 td { (s.Spikes)          } }
-                    tr { td .sideth { "Conjuration" } td { }                                 td { (s.Conjuration) "%" } }
+                    tr { td .sideth { "Conjuration" } td { }                                 td { (s.Conjuration)     } }
                     tr { td .sideth { "Potential"   } BarTd p=(s.Potential) show=false;      td { (s.Potential)   "%" } }
-                    }
+                }
                 }
 
-                table {
-                    thead { tr { th colspan=3 { "Resistances" } } }
-                    tbody {
+                @if morgue.info.resists != crate::morgue::Resistances::placeholder() {
+                    table {
+                        thead { tr { th colspan=3 { "Resistances" } } }
                         @let s = &morgue.info.resists;
                         tr { td .sideth { "Armor" } SBarTd p=(s.Armor) show=false; td { (s.Armor)"%" } }
                         tr { td .sideth { "rFire" } SBarTd p=(s.rFire) show=false; td { (s.rFire)"%" } }
@@ -314,6 +316,9 @@ async fn score_page(
                                 td { (desc) }
                             }
                         }
+                        @if morgue.info.aptitudes_names.is_empty() {
+                            tr { td colspan=2 { "(none)" } }
+                        }
                     }
                 }
 
@@ -329,6 +334,9 @@ async fn score_page(
                                 td { (desc) }
                             }
                         }
+                        @if morgue.info.augments_names.is_empty() {
+                            tr { td colspan=2 { "(none)" } }
+                        }
                     }
                 }
             }
@@ -338,16 +346,19 @@ async fn score_page(
                 table {
                     thead { tr { th colspan=999 { "Permanent Status Effects" } } }
                     tbody {
-                        @let statuses =
+                        @let statuses = ||
                             morgue.info.statuses
                                 .iter()
                                 .filter(|s| s.duration.duration_type.is_perm());
-                        @for status in statuses {
+                        @for status in statuses() {
                             tr {
                                 td .sideth { (status.duration.duration_type.to_string()) }
                                 td { (status.status) }
                                 td #m .shrink hidden[status.power == 0] { "<" (status.power) ">" }
                             }
+                        }
+                        @if statuses().count() == 0 {
+                            tr { td colspan=2 { "(none)" } }
                         }
                     }
                 }
@@ -360,17 +371,20 @@ async fn score_page(
                 table {
                     thead { tr { th colspan=999 { "Status Effects" } } }
                     tbody {
-                        @let statuses =
+                        @let statuses = ||
                             morgue.info.statuses
                                 .iter()
                                 .filter(|s| !s.duration.duration_type.is_perm());
-                        @for status in statuses {
+                        @for status in statuses() {
                             tr {
                                 td .sideth { (status.duration.duration_type.to_string()) }
                                 td { (status.status) }
                                 td .shrink { "(" (status.duration.duration_arg) ")" }
                                 td #m .shrink hidden[status.power == 0] { "<" (status.power) ">" }
                             }
+                        }
+                        @if statuses().count() == 0 {
+                            tr { td colspan=2 { "(none)" } }
                         }
                     }
                 }
@@ -382,16 +396,13 @@ async fn score_page(
                             morgue.info.in_view_names
                                 .iter()
                                 .fold(
-                                    Vec::<(String, usize)>::new(),
-                                    |mut list, name| {
-                                        if let Some(last_set) = list.last_mut() && &last_set.0 == name {
-                                            last_set.1 += 1;
-                                        } else {
-                                            list.push((name.clone(), 1));
-                                        }
-                                        list
+                                    HashMap::<&str, usize>::new(),
+                                    |mut counts, name| {
+                                        *counts.entry(name).or_insert(0) += 1;
+                                        counts
                                     }
-                                );
+                                )
+                                .into_iter();
                         @for (name, repeat) in creatures {
                             tr {
                                 td .shrink {
@@ -442,8 +453,17 @@ async fn score_page(
             table .sheet {
                 RecordsHeader s=(&morgue.stats);
                 tbody {
-                    SingleValueSet v=(&morgue.stats.turns_spent)         n="turns spent";
+                    SingleValueSet v=(&morgue.stats.turns_spent)         n="turns spent"             t=true;
                     BatchValueSet  v=(&morgue.stats.turns_with_statuses) n="turns w/ status effects";
+                }
+            }
+
+            Anchor4 a="records-general-level" n="Before leaving floor";
+            table .sheet {
+                RecordsHeader s=(&morgue.stats);
+                tbody {
+                    SingleValueSet v=(&morgue.stats.health)              n="health"                  t=false;
+                    SingleValueSet v=(&morgue.stats.night_reputation)    n="night reputation"        t=false;
                 }
             }
 
@@ -457,6 +477,8 @@ async fn score_page(
                     BatchValueSet  v=(&morgue.stats.stabbed_foes)        n="foes slain by surprise";
                     BatchValueSet  v=(&morgue.stats.inflicted_damage)    n="inflicted damage";
                     BatchValueSet  v=(&morgue.stats.endured_damage)      n="endured damage";
+                    BatchValueSet  v=(&morgue.stats.endured_spells)      n="endured spells";
+                    BatchValueSet  v=(&morgue.stats.endured_healing)     n="health restored";
                 }
             }
 
@@ -478,9 +500,9 @@ async fn score_page(
             table .sheet {
                 RecordsHeader s=(&morgue.stats);
                 tbody {
-                    SingleValueSet v=(&morgue.stats.lairs_trespassed)    n="lairs_trespassed";
-                    SingleValueSet v=(&morgue.stats.candles_destroyed)   n="candles destroyed";
-                    SingleValueSet v=(&morgue.stats.shrines_drained)     n="shrines drained";
+                    SingleValueSet v=(&morgue.stats.lairs_trespassed)    n="lairs_trespassed"   t=true;
+                    SingleValueSet v=(&morgue.stats.candles_destroyed)   n="candles destroyed"  t=true;
+                    SingleValueSet v=(&morgue.stats.shrines_drained)     n="shrines drained"    t=true;
                     BatchValueSet  v=(&morgue.stats.times_corrupted)     n="times corrupted";
                     BatchValueSet  v=(&morgue.stats.wizard_keys_used)    n="cheat codes used";
                 }
@@ -530,12 +552,14 @@ fn records_header<'a>(s: &'a morgue::MorgueStats) -> impl Renderable + use<'a> {
 }
 
 #[component]
-fn single_value_set<'a>(v: &'a morgue::SingleValueSet, n: &'a str) -> impl Renderable + use<'a> {
+fn single_value_set<'a>(v: &'a morgue::SingleValueSet, n: &'a str, t: bool) -> impl Renderable + use<'a> {
     maud! {
         tr {
             td { (n) }
             td { }
-            td #m { (v.value.total) }
+            @if t {
+                td #m { (v.value.total) }
+            }
             @for c in &v.value.values {
                 td #m { (c.value) }
             }
@@ -677,6 +701,16 @@ async fn highscore_page(State(state): State<AppState>) -> impl IntoResponse {
                     }
                 }
             }
+
+            h3 { "Manual Upload" }
+
+            "You may upload your morgue file (" code { ".json" } ") manually if it does not appear here."
+
+            br;
+            form action="/api/upload-form" method="POST" enctype="multipart/form-data" {
+                input type="file" id="file" name="file" required;
+                button type="submit" { "Submit" }
+            }
         }
     }.render();
 
@@ -772,7 +806,7 @@ impl<R: Renderable> Renderable for Doc<R> {
                     meta charset="utf-8";
                     link href=(format!("data:image/png;base64,{FAVICON}")) rel="icon";
 
-                    script data-goatcounter="https://loap.goatcounter.com/count"
+                    script data-goatcounter="https://oathbreaker.goatcounter.com/count"
                         async src="//gc.zgo.at/count.js" { }
 
                     style { (Raw(STYLE)) }

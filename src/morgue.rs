@@ -62,7 +62,7 @@ pub struct StatusInfo {
     pub exhausting: bool,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[allow(non_snake_case)]
 pub struct Resistances {
     pub Armor: isize,
@@ -74,12 +74,12 @@ pub struct Resistances {
 }
 
 impl Resistances {
-    pub fn placeholder() -> Resistances {
-        Resistances { Armor: 0, rFire: 0, rElec: 0, rFume: 0, rAcid: 0, rHoly: 0 }
+    pub const fn placeholder() -> Resistances {
+        Resistances { Armor: isize::MAX, rFire: isize::MAX, rElec: isize::MAX, rFume: usize::MAX, rAcid: isize::MAX, rHoly: isize::MAX }
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[allow(non_snake_case)]
 pub struct Stats {
     pub Melee: usize,
@@ -92,6 +92,23 @@ pub struct Stats {
     pub Spikes: usize,
     pub Conjuration: usize,
     pub Potential: usize,
+}
+
+impl Stats {
+    pub const fn placeholder() -> Stats {
+        Stats {
+            Melee: usize::MAX,
+            Missile: usize::MAX,
+            Martial: usize::MAX,
+            Evade: usize::MAX,
+            Speed: usize::MAX,
+            Vision: usize::MAX,
+            Willpower: usize::MAX,
+            Spikes: usize::MAX,
+            Conjuration: usize::MAX,
+            Potential: usize::MAX,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -124,6 +141,7 @@ pub struct MorgueInfo {
 
     pub level: u8,
     pub statuses: Vec<StatusInfo>,
+    #[serde(default = "Stats::placeholder")]
     pub stats: Stats,
     #[serde(default = "Resistances::placeholder")]
     pub resists: Resistances,
@@ -159,8 +177,17 @@ pub struct ValueSet {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SingleValueSet {
-    pub r#type: String, // Unused
+    #[serde(rename = "type")] _t: Option<String>,
     pub value: ValueSet,
+}
+
+impl SingleValueSet {
+    pub fn placeholder() -> SingleValueSet {
+        Self {
+            _t: None,
+            value: ValueSet { total: 0, values: Vec::new() },
+        }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -171,11 +198,18 @@ pub struct BatchValueSetItem {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BatchValueSet {
-    pub r#type: String,
+    #[serde(rename = "type")] _t: Option<String>,
     pub values: Vec<BatchValueSetItem>,
 }
 
 impl BatchValueSet {
+    pub fn placeholder() -> BatchValueSet {
+        Self {
+            _t: None,
+            values: Vec::new(),
+        }
+    }
+
     pub fn total(&self) -> u64 {
         self.values
             .iter()
@@ -193,20 +227,28 @@ pub enum GameResult {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MorgueStats {
-    #[serde(rename = "turns spent")]       pub turns_spent: SingleValueSet,
-    #[serde(rename = "turns w/ statuses")] pub turns_with_statuses: BatchValueSet,
-    #[serde(rename = "vanquished foes")]   pub vanquished_foes: BatchValueSet,
-    #[serde(rename = "stabbed foes")]      pub stabbed_foes: BatchValueSet,
-    #[serde(rename = "inflicted damage")]  pub inflicted_damage: BatchValueSet,
-    #[serde(rename = "endured damage")]    pub endured_damage: BatchValueSet,
-    #[serde(rename = "items thrown")]      pub items_thrown: BatchValueSet,
-    #[serde(rename = "items used")]        pub items_used: BatchValueSet,
-    #[serde(rename = "rings used")]        pub rings_used: BatchValueSet,
-    #[serde(rename = "lairs trespassed")]  pub lairs_trespassed: SingleValueSet,
-    #[serde(rename = "candles destroyed")] pub candles_destroyed: SingleValueSet,
-    #[serde(rename = "shrines drained")]   pub shrines_drained: SingleValueSet,
-    #[serde(rename = "times corrupted")]   pub times_corrupted: BatchValueSet,
-    #[serde(rename = "wizard keys used")]  pub wizard_keys_used: BatchValueSet,
+    #[serde(rename="turns spent")]       pub turns_spent: SingleValueSet,
+    #[serde(rename="turns w/ statuses")] pub turns_with_statuses: BatchValueSet,
+    #[serde(default="SingleValueSet::placeholder")]
+    #[serde(rename="health")]            pub health: SingleValueSet,
+    #[serde(default="SingleValueSet::placeholder")]
+    #[serde(rename="night reputation")]  pub night_reputation: SingleValueSet,
+    #[serde(rename="vanquished foes")]   pub vanquished_foes: BatchValueSet,
+    #[serde(rename="stabbed foes")]      pub stabbed_foes: BatchValueSet,
+    #[serde(rename="inflicted damage")]  pub inflicted_damage: BatchValueSet,
+    #[serde(rename="endured damage")]    pub endured_damage: BatchValueSet,
+    #[serde(default="BatchValueSet::placeholder")]
+    #[serde(rename="endured spells")]    pub endured_spells: BatchValueSet,
+    #[serde(default="BatchValueSet::placeholder")]
+    #[serde(rename="health restored")]   pub endured_healing: BatchValueSet,
+    #[serde(rename="items thrown")]      pub items_thrown: BatchValueSet,
+    #[serde(rename="items used")]        pub items_used: BatchValueSet,
+    #[serde(rename="rings used")]        pub rings_used: BatchValueSet,
+    #[serde(rename="lairs trespassed")]  pub lairs_trespassed: SingleValueSet,
+    #[serde(rename="candles destroyed")] pub candles_destroyed: SingleValueSet,
+    #[serde(rename="shrines drained")]   pub shrines_drained: SingleValueSet,
+    #[serde(rename="times corrupted")]   pub times_corrupted: BatchValueSet,
+    #[serde(rename="wizard keys used")]  pub wizard_keys_used: BatchValueSet,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -228,3 +270,5 @@ impl Morgue {
         }
     }
 }
+
+pub mod placeholders { }
