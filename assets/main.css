@@ -273,18 +273,21 @@ hr {
 
 table {
     font-family: 'Atkinson Hyperlegible Next', sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+
+    thead>tr {
+        background: var(--green-3);
+        border: 1px solid var(--fg);
+    }
 
     tbody>tr>td, thead>tr>th {
         padding: 0.25em 0.5em 0.25em 0.5em;
     }
 
     tbody>tr {
-        border: 1px solid var(--fg-dark);
+        border: 0.1rem solid var(--fg-dark);
     }
-}
-
-table.list, table.sheet {
-    overflow-x: scroll;
 }
 
 table.list {
@@ -340,16 +343,6 @@ td.subtle {
     background: var(--green-2) !important;
     text-align: right;
     border-right: 0.2rem double var(--fg-6);
-}
-
-table>thead>tr {
-    background: var(--green-3);
-    border: 1px solid var(--fg);
-}
-
-table {
-    border-collapse: collapse;
-    width: 100%;
 }
 
 a {
@@ -661,7 +654,7 @@ form {
     }
 
     .panel-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
     }
 
     ul, ol {
@@ -678,7 +671,16 @@ form {
         }
     }
 
+    table {
+        font-size: 0.8rem !important;
+    }
+
     :popover-open {
         max-width: 95%;
+    }
+
+    img:not(.inline) {
+        max-width: 80%;
+        margin: auto;
     }
 }
