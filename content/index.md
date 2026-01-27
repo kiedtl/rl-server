@@ -20,9 +20,9 @@ Oathbreaker is
 
   Other examples of traditional roguelikes:
   [NetHack](https://en.wikipedia.org/wiki/NetHack),
-  [DCSS](https://crawl.develz.org/), or
+  [DCSS](https://crawl.develz.org/),
   [The Ground Gives Way](https://www.thegroundgivesway.com/),
-  [Harmonist](https://anaseto.codeberg.page/games/harmonist/),
+  [Harmonist](https://anaseto.codeberg.page/games/harmonist/), or
   [Cogmind](https://www.gridsagegames.com/cogmind/).
 
 
@@ -84,11 +84,11 @@ a web version are possible future projects.
 
 </div>
 
-<button class="popover" popovertarget="img1">
+<button class="popover" popovertarget="img2">
     <img src="/images/rl/26/jan23-website-showcase-lab.png" />
 </button>
 
-<div popover id="img1">
+<div popover id="img2">
     <img src="/images/rl/26/jan23-website-showcase-lab.png" />
 </div>
 
