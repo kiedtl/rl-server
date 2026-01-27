@@ -114,11 +114,11 @@ confusing. (Don't worry, there's plenty *not* discussed that's left for you to
 discover on your own!)
 </div>
 
-<button class="popover" popovertarget="img2">
+<button class="popover" popovertarget="img3">
     <img src="/images/rl/26/jan23-website-hld.png" />
 </button>
 
-<div popover id="img2">
+<div popover id="img3">
     <img src="/images/rl/26/jan23-website-hld.png" />
 </div>
 
